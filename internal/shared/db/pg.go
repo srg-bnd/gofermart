@@ -11,7 +11,7 @@ type InitPostgresConfig struct {
 	IsFireMigration bool
 }
 
-func InitPostgres(config *InitPostgresConfig) *gorm.DB {
+func InitPostgres(config *InitPostgresConfig, migrate func(db *gorm.DB) error) *gorm.DB {
 	if config.DSN == "" {
 		return nil
 	}
@@ -22,7 +22,10 @@ func InitPostgres(config *InitPostgresConfig) *gorm.DB {
 		return nil
 	}
 	if config.IsFireMigration {
-		migrate(gormDB)
+		err := migrate(gormDB)
+		if err != nil {
+			return nil
+		}
 	}
 
 	logger.L().Info("connected to postgres")

@@ -4,10 +4,10 @@ import (
 	"net/http"
 	"strconv"
 	"ya41-56/internal/gophermart/models"
-	"ya41-56/internal/gophermart/repositories"
 	"ya41-56/internal/gophermart/services"
 	"ya41-56/internal/shared/httputil"
 	"ya41-56/internal/shared/logger"
+	"ya41-56/internal/shared/repositories"
 	"ya41-56/internal/shared/response"
 )
 
@@ -49,7 +49,7 @@ func (h *UsersHandler) List(w http.ResponseWriter, r *http.Request) {
 	})
 }
 
-func (h *UsersHandler) GetByID(w http.ResponseWriter, r *http.Request) {
+func (h *UsersHandler) GetByID(_ http.ResponseWriter, _ *http.Request) {
 
 }
 

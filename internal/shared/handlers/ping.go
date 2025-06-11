@@ -3,7 +3,6 @@ package handlers
 import (
 	"context"
 	"gorm.io/gorm"
-	"log"
 	"net/http"
 	"time"
 	"ya41-56/internal/shared/response"
@@ -16,18 +15,15 @@ func PingHandler(dbConn *gorm.DB) http.HandlerFunc {
 
 		dbInstance, err := dbConn.DB()
 		if err != nil {
-			log.Printf("failed to get DB instance: %v", err)
-			http.Error(w, "unhealthy", http.StatusServiceUnavailable)
+			response.Error(w, http.StatusInternalServerError, err.Error())
 			return
 		}
 
 		if err := dbInstance.PingContext(ctx); err != nil {
-			log.Printf("DB ping failed: %v", err)
-			http.Error(w, "unhealthy", http.StatusServiceUnavailable)
+			response.Error(w, http.StatusInternalServerError, err.Error())
 			return
 		}
 
-		w.WriteHeader(http.StatusOK)
 		response.JSON(w, http.StatusOK, "pong")
 	}
 }
