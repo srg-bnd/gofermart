@@ -98,7 +98,7 @@ func (h *OrdersHandler) CreateOrder(w http.ResponseWriter, r *http.Request) {
 
 	h.Processor.Add(worker.OrderTask{OrderID: order.ID})
 
-	response.JSON(w, http.StatusOK, map[string]string{
+	response.JSON(w, http.StatusAccepted, map[string]string{
 		"order":  order.Number,
 		"status": order.Status,
 	})
