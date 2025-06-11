@@ -48,16 +48,11 @@ func (h *AuthHandler) Login(w http.ResponseWriter, r *http.Request) {
 	})
 }
 
-type refreshRequest struct {
-	RefreshToken string `json:"refreshToken"`
-}
-
-type refreshResponse struct {
-	AccessToken string `json:"accessToken"`
-}
-
 func (h *AuthHandler) ProtectedPing(w http.ResponseWriter, r *http.Request) {
-	w.Write([]byte("authorized"))
+	_, err := w.Write([]byte("authorized"))
+	if err != nil {
+		return
+	}
 }
 
 type registerRequest struct {
