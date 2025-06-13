@@ -15,21 +15,27 @@ Dependencies:
 
 ### Startup
 
-To build a gophermart-server, run in the terminal:
-
-```bash
-make # in the root directory of the project
-```
-
 #### Gophermart
 
-To startup the gophermart (server), run in the terminal:
+To build a gophermart, run in the terminal:
 
 ```bash
-./server # in the root directory of the project
+make build_gophermart # in the root directory of the project
+```
+
+To startup the gophermart, run in the terminal:
+
+```bash
+./gophermart # in the root directory of the project
 ```
 
 #### Accrual
+
+To build a accrual, run in the terminal:
+
+```bash
+make accrual # in the root directory of the project
+```
 
 To startup the accrual, run in the terminal:
 
