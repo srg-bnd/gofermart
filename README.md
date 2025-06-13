@@ -3,7 +3,7 @@
 Cumulative loyalty system.
 
 [![go report card](https://goreportcard.com/badge/github.com/mobypolo/ya-41-56go?style=flat-square)](https://goreportcard.com/report/github.com/mobypolo/ya-41-56go)
-[![test status](https://github.com/mobypolo/ya-41-56go/workflows/tests/badge.svg?branch=master "test status")](https://github.com/mobypolo/ya-41-56go/actions)
+[![test status](https://github.com/mobypolo/ya-41-56go/workflows/gophermart/badge.svg?branch=main "test status")](https://github.com/mobypolo/ya-41-56go/actions)
 
 ## Getting Started
 
@@ -21,7 +21,7 @@ To build a gophermart-server, run in the terminal:
 make # in the root directory of the project
 ```
 
-### Gophermart
+#### Gophermart
 
 To startup the gophermart (server), run in the terminal:
 
@@ -29,7 +29,7 @@ To startup the gophermart (server), run in the terminal:
 ./server # in the root directory of the project
 ```
 
-#### Sartup flags & envs
+##### Sartup flags & envs
 
 * `-d` | `DATABASE_DSN` – PostgresSQL DSN
 * `-a` | `ADDRESS` – HTTP server address (default `localhost:8080`)
