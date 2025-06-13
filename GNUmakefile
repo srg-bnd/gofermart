@@ -4,14 +4,26 @@ VERSION=0.0.1
 BINARY_SERVER=server
 BINARY_ACCRUAL=accrual
 OS_ARCH=darwin_amd64
+COMBINED_FILE := combined.go
 
 default: build
 
 build: build_server build
 
 combine:
-	(find cmd/gophermart/main.go; find internal/gophermart -type f -name "*.go") \
-		| while read file; do echo "// ===== $file ====="; cat "$file"; echo ""; done > combined.go
+	@echo "Combining Go files into $(COMBINED_FILE)..."
+	@rm -f $(COMBINED_FILE)
+	@{ \
+		echo cmd/flags.go; \
+		find cmd/accrual -type f -name "*.go"; \
+		find internal/accrual -type f -name "*.go"; \
+		find internal/shared -type f -name "*.go"; \
+	} | while read -r file; do \
+		echo "// ===== $$file =====" >> $(COMBINED_FILE); \
+		cat "$$file" >> $(COMBINED_FILE); \
+		echo "" >> $(COMBINED_FILE); \
+	done
+	@echo "Done: $(COMBINED_FILE)"
 
 build_accrual:
 	go build -o ${BINARY_ACCRUAL} cmd/accrual/main.go

@@ -5,13 +5,14 @@ import (
 	"go.uber.org/zap"
 	httpServer "net/http"
 	"ya41-56/cmd"
-	"ya41-56/internal/gophermart/db"
-	"ya41-56/internal/gophermart/http"
+	dbLocal "ya41-56/internal/gophermart/db"
+	"ya41-56/internal/gophermart/di"
 	"ya41-56/internal/gophermart/models"
-	"ya41-56/internal/gophermart/repositories"
+	"ya41-56/internal/gophermart/router"
 	"ya41-56/internal/gophermart/services"
-	"ya41-56/internal/shared/di"
+	"ya41-56/internal/shared/db"
 	"ya41-56/internal/shared/logger"
+	"ya41-56/internal/shared/repositories"
 )
 
 func Run() {
@@ -21,7 +22,7 @@ func Run() {
 	dbConn := db.InitPostgres(&db.InitPostgresConfig{
 		DSN:             cfg.DatabaseDSN,
 		IsFireMigration: true,
-	})
+	}, dbLocal.Migrate)
 
 	if dbConn == nil {
 		logger.L().Fatal("failed to init database")
@@ -29,7 +30,7 @@ func Run() {
 
 	userRepo := repositories.NewGormRepository[models.User](dbConn)
 
-	r := http.RegisterRoutes(&di.AppContainer{
+	r := router.RegisterRoutes(&di.AppContainer{
 		UserRepo: userRepo,
 		Auth:     services.NewAuthService(userRepo), // тут должен быть сервис для авторизации, сейчас нет реализации
 		Router:   chi.NewRouter(),

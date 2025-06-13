@@ -1,17 +1,14 @@
-package http
+package router
 
 import (
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/cors"
 	"net/http"
+	"ya41-56/internal/gophermart/di"
 	"ya41-56/internal/gophermart/handlers"
-	"ya41-56/internal/gophermart/http/middleware"
-	"ya41-56/internal/shared/di"
+	sharedHandlers "ya41-56/internal/shared/handlers"
+	"ya41-56/internal/shared/http/middleware"
 )
-
-type RegisterRoutesStruct struct {
-	Router chi.Router
-}
 
 func RegisterRoutes(appContainer *di.AppContainer) http.Handler {
 	authMiddleware := middleware.New(*appContainer.Auth)
@@ -28,7 +25,7 @@ func RegisterRoutes(appContainer *di.AppContainer) http.Handler {
 		MaxAge:           300,
 	}))
 
-	appContainer.Router.Get("/ping", handlers.PingHandler(appContainer.Gorm))
+	appContainer.Router.Get("/ping", sharedHandlers.PingHandler(appContainer.Gorm))
 
 	// TODO: Нигде в методах нет реализации, чисто заглушки
 	appContainer.Router.Route("/api", func(r chi.Router) {

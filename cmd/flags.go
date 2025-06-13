@@ -7,14 +7,17 @@ import (
 	"github.com/spf13/pflag"
 	"log"
 	"os"
+	"time"
 	"ya41-56/internal/shared/logger"
 )
 
 type Config struct {
-	Address     string            `env:"ADDRESS" envDefault:"localhost:8080"`
-	ModeLogger  logger.ModeLogger `env:"LOG_MODE" envDefault:"dev"`
-	DatabaseDSN string            `env:"DATABASE_DSN" envDefault:""`
-	CorsOrigins []string          `env:"CORS_ORIGINS" envDefault:"http://localhost:3000"`
+	Address         string            `env:"RUN_ADDRESS" envDefault:"localhost:8080"`
+	ModeLogger      logger.ModeLogger `env:"LOG_MODE" envDefault:"dev"`
+	DatabaseDSN     string            `env:"DATABASE_URI" envDefault:""`
+	CorsOrigins     []string          `env:"CORS_ORIGINS" envDefault:"http://localhost:3000"`
+	WorkersCount    int               `env:"WORKERS_COUNT" envDefault:"5"`
+	ShutdownTimeout time.Duration     `env:"SHUTDOWN_TIMEOUT" envDefault:"5s"`
 }
 
 func ParseFlags() Config {

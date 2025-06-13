@@ -5,6 +5,7 @@ import (
 	"strings"
 	"ya41-56/internal/gophermart/services"
 	"ya41-56/internal/shared/contextutil"
+	"ya41-56/internal/shared/response"
 )
 
 type AuthMiddleware struct {
@@ -21,14 +22,14 @@ func (m *AuthMiddleware) IsAuthenticated(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		authHeader := r.Header.Get("Authorization")
 		if !strings.HasPrefix(authHeader, "Bearer ") {
-			http.Error(w, "unauthorized", http.StatusUnauthorized)
+			response.Error(w, http.StatusUnauthorized, "unauthorized")
 			return
 		}
 
 		token := strings.TrimPrefix(authHeader, "Bearer ")
 		currentUser, err := m.Auth.ParseAndValidate(token)
 		if err != nil {
-			http.Error(w, "invalid token", http.StatusForbidden)
+			response.Error(w, http.StatusUnauthorized, "unauthorized")
 			return
 		}
 

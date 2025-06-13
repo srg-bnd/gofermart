@@ -5,7 +5,7 @@ import (
 	"net/http"
 )
 
-func ParseJson(r *http.Request, dst any) error {
+func ParseJSON(r *http.Request, dst any) error {
 	dec := json.NewDecoder(r.Body)
 	//dec.DisallowUnknownFields()
 

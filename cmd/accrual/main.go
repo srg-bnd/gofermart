@@ -1,3 +1,7 @@
 package main
 
-func main() {}
+import "ya41-56/internal/accrual/bootstrap"
+
+func main() {
+	bootstrap.Run()
+}

@@ -4,8 +4,8 @@ import (
 	"context"
 	"errors"
 	"ya41-56/internal/gophermart/models"
-	"ya41-56/internal/gophermart/repositories"
 	"ya41-56/internal/shared/bcryptutil"
+	"ya41-56/internal/shared/repositories"
 )
 
 type AuthService struct {

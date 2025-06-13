@@ -10,10 +10,12 @@ type Repository[T any] interface {
 	Update(ctx context.Context, entity *T) error
 	Delete(ctx context.Context, id string) error
 	FindByID(ctx context.Context, id string) (*T, error)
+	FindByIDWithPreloads(ctx context.Context, id uint, preloads ...string) (*T, error)
 	FindAll(ctx context.Context) ([]T, error)
 	FindAllPaginated(ctx context.Context, pagination Pagination, preloads ...string) ([]T, bool, error)
 
 	FindByField(ctx context.Context, field string, value any) (*T, error)
+	FindByFieldWithPreloads(ctx context.Context, field string, value any, preloads ...string) (*T, error)
 	FindManyByField(ctx context.Context, field string, value any) ([]T, error)
 }
 
@@ -40,6 +42,16 @@ func (r *GormRepository[T]) Delete(ctx context.Context, id string) error {
 func (r *GormRepository[T]) FindByID(ctx context.Context, id string) (*T, error) {
 	var entity T
 	err := r.db.WithContext(ctx).First(&entity, "id = ?", id).Error
+	return &entity, err
+}
+
+func (r *GormRepository[T]) FindByIDWithPreloads(ctx context.Context, id uint, preloads ...string) (*T, error) {
+	var entity T
+	query := r.db.WithContext(ctx)
+	for _, preload := range preloads {
+		query = query.Preload(preload)
+	}
+	err := query.First(&entity, id).Error
 	return &entity, err
 }
 
@@ -87,6 +99,16 @@ func (r *GormRepository[T]) FindAllPaginated(
 func (r *GormRepository[T]) FindByField(ctx context.Context, field string, value any) (*T, error) {
 	var entity T
 	err := r.db.WithContext(ctx).Where(field+" = ?", value).First(&entity).Error
+	return &entity, err
+}
+
+func (r *GormRepository[T]) FindByFieldWithPreloads(ctx context.Context, field string, value any, preloads ...string) (*T, error) {
+	var entity T
+	query := r.db.WithContext(ctx)
+	for _, preload := range preloads {
+		query = query.Preload(preload)
+	}
+	err := query.Where(field+" = ?", value).First(&entity).Error
 	return &entity, err
 }
 

@@ -5,8 +5,8 @@ import (
 	"gorm.io/gorm"
 	"ya41-56/cmd"
 	"ya41-56/internal/gophermart/models"
-	"ya41-56/internal/gophermart/repositories"
 	"ya41-56/internal/gophermart/services"
+	"ya41-56/internal/shared/repositories"
 )
 
 type AppContainer struct {
