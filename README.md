@@ -45,6 +45,7 @@ To startup the accrual, run in the terminal:
 
 #### Sartup envs & flags
 
+* `JWT_SECRET_KEY` – JWT secret key.
 * `DATABASE_URI` | `-d` – PostgresSQL DSN
 * `RUN_ADDRESS` | `-a` – HTTP server address. Default `localhost:8080`
 * `LOG_MODE` – Logging mode. Default `dev`. Values `info`, `dev`, `warn`, `error`

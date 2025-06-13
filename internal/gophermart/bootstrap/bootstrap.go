@@ -1,8 +1,6 @@
 package bootstrap
 
 import (
-	"github.com/go-chi/chi/v5"
-	"go.uber.org/zap"
 	httpServer "net/http"
 	"ya41-56/cmd"
 	dbLocal "ya41-56/internal/gophermart/db"
@@ -13,6 +11,9 @@ import (
 	"ya41-56/internal/shared/db"
 	"ya41-56/internal/shared/logger"
 	"ya41-56/internal/shared/repositories"
+
+	"github.com/go-chi/chi/v5"
+	"go.uber.org/zap"
 )
 
 func Run() {
@@ -29,6 +30,10 @@ func Run() {
 	}
 
 	userRepo := repositories.NewGormRepository[models.User](dbConn)
+
+	if cfg.JWTSecretKey == "" {
+		logger.L().Fatal("empty JWT_SECRET_KEY")
+	}
 
 	r := router.RegisterRoutes(&di.AppContainer{
 		UserRepo: userRepo,
