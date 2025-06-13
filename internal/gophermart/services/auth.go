@@ -22,7 +22,7 @@ type Claims struct {
 	UserLogin string `json:"login"`
 }
 
-const DEFAULT_TOKEN_EXP = time.Hour * 1
+const DefaultTokenExp = time.Hour * 1
 
 var ErrInvalidCreds = errors.New("invalid credentials")
 var ErrUserExists = errors.New("user already exists")
@@ -38,7 +38,7 @@ func NewAuthService(users repositories.Repository[models.User], secretKey string
 func (s *AuthService) BuildJWTString(login string) (string, error) {
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, &Claims{
 		RegisteredClaims: jwt.RegisteredClaims{
-			ExpiresAt: jwt.NewNumericDate(time.Now().Add(DEFAULT_TOKEN_EXP)),
+			ExpiresAt: jwt.NewNumericDate(time.Now().Add(DefaultTokenExp)),
 		},
 		UserLogin: login,
 	})
