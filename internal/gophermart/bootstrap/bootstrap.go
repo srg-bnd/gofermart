@@ -16,6 +16,12 @@ import (
 	"go.uber.org/zap"
 )
 
+var (
+	ErrInitDB         = "failed to init database"
+	ErrEmptySecretKey = "empty secret key for JWT"
+	ErrHTTPServer     = "failed to start HTTP server"
+)
+
 func Run() {
 	cfg := cmd.ParseFlags()
 	logger.Init(cfg.ModeLogger)
@@ -26,18 +32,18 @@ func Run() {
 	}, dbLocal.Migrate)
 
 	if dbConn == nil {
-		logger.L().Fatal("failed to init database")
+		logger.L().Fatal(ErrInitDB)
 	}
 
 	userRepo := repositories.NewGormRepository[models.User](dbConn)
 
 	if cfg.JWTSecretKey == "" {
-		logger.L().Fatal("empty JWT_SECRET_KEY")
+		logger.L().Fatal(ErrEmptySecretKey)
 	}
 
 	r := router.RegisterRoutes(&di.AppContainer{
 		UserRepo: userRepo,
-		Auth:     services.NewAuthService(userRepo), // тут должен быть сервис для авторизации, сейчас нет реализации
+		Auth:     services.NewAuthService(userRepo, cfg.JWTSecretKey),
 		Router:   chi.NewRouter(),
 		Cfg:      cfg,
 		Gorm:     dbConn,
@@ -47,6 +53,6 @@ func Run() {
 
 	err := httpServer.ListenAndServe(cfg.Address, r)
 	if err != nil {
-		logger.L().Fatal("failed to start HTTP server", zap.Error(err))
+		logger.L().Fatal(ErrHTTPServer, zap.Error(err))
 	}
 }
