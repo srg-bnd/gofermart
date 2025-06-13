@@ -29,10 +29,22 @@ To startup the gophermart (server), run in the terminal:
 ./server # in the root directory of the project
 ```
 
-##### Sartup flags & envs
+#### Accrual
 
-* `-d` | `DATABASE_DSN` – PostgresSQL DSN
-* `-a` | `ADDRESS` – HTTP server address (default `localhost:8080`)
+To startup the accrual, run in the terminal:
+
+```bash
+./accrual # in the root directory of the project
+```
+
+#### Sartup envs & flags
+
+* `DATABASE_URI` | `-d` – PostgresSQL DSN
+* `RUN_ADDRESS` | `-a` – HTTP server address. Default `localhost:8080`
+* `LOG_MODE` – Logging mode. Default `dev`. Values `info`, `dev`, `warn`, `error`
+* `CORS_ORIGINS` – List of CORS-origins. Default `http://localhost:3000`
+* `WORKERS_COUNT` – Count of workers. Default `5`
+* `SHUTDOWN_TIMEOUT` – Shutdown timeout. Default `5s`
 
 ## Development
 
