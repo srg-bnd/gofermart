@@ -3,6 +3,7 @@ package services
 import (
 	"context"
 	"errors"
+	"fmt"
 	"time"
 	"ya41-56/internal/gophermart/models"
 	"ya41-56/internal/shared/bcryptutil"
@@ -18,10 +19,10 @@ type AuthService struct {
 
 type Claims struct {
 	jwt.RegisteredClaims
-	Login string `json:"login"`
+	UserLogin string `json:"login"`
 }
 
-const DEFAULT_TOKEN_EXP = time.Hour * 3
+const DEFAULT_TOKEN_EXP = time.Hour * 1
 
 var ErrInvalidCreds = errors.New("invalid credentials")
 var ErrUserExists = errors.New("user already exists")
@@ -39,7 +40,7 @@ func (s *AuthService) BuildJWTString(login string) (string, error) {
 		RegisteredClaims: jwt.RegisteredClaims{
 			ExpiresAt: jwt.NewNumericDate(time.Now().Add(DEFAULT_TOKEN_EXP)),
 		},
-		Login: login,
+		UserLogin: login,
 	})
 
 	tokenString, err := token.SignedString([]byte(s.secretKey))
@@ -63,8 +64,21 @@ func (s *AuthService) Login(ctx context.Context, login, password string) (string
 	return s.BuildJWTString(user.Login)
 }
 
-func (s *AuthService) ParseAndValidate(_ string) (models.User, error) {
-	return models.User{}, nil
+func (s *AuthService) ParseAndValidateToken(ctx context.Context, tokenString string) (*models.User, error) {
+	claims := &Claims{}
+	token, err := jwt.ParseWithClaims(tokenString, claims,
+		func(t *jwt.Token) (interface{}, error) {
+			if _, ok := t.Method.(*jwt.SigningMethodHMAC); !ok {
+				return nil, fmt.Errorf("unexpected signing method: %v", t.Header["alg"])
+			}
+			return []byte(s.secretKey), nil
+		})
+
+	if err != nil || !token.Valid {
+		return nil, ErrJWTToken
+	}
+
+	return s.Users.FindByField(ctx, "login", claims.UserLogin)
 }
 
 func (s *AuthService) Register(ctx context.Context, user *models.User) (string, error) {

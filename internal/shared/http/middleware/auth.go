@@ -22,14 +22,14 @@ func (m *AuthMiddleware) IsAuthenticated(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		authHeader := r.Header.Get("Authorization")
 		if !strings.HasPrefix(authHeader, "Bearer ") {
-			response.Error(w, http.StatusUnauthorized, "unauthorized")
+			response.Error(w, http.StatusUnauthorized, http.StatusText(http.StatusUnauthorized))
 			return
 		}
 
 		token := strings.TrimPrefix(authHeader, "Bearer ")
-		currentUser, err := m.Auth.ParseAndValidate(token)
+		currentUser, err := m.Auth.ParseAndValidateToken(r.Context(), token)
 		if err != nil {
-			response.Error(w, http.StatusUnauthorized, "unauthorized")
+			response.Error(w, http.StatusUnauthorized, http.StatusText(http.StatusUnauthorized))
 			return
 		}
 
