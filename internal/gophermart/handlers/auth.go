@@ -71,8 +71,11 @@ func (h *AuthHandler) Login(w http.ResponseWriter, r *http.Request) {
 func (h *AuthHandler) ProtectedPing(w http.ResponseWriter, r *http.Request) {
 	_, err := w.Write([]byte("authorized"))
 	if err != nil {
+		response.Error(w, http.StatusUnauthorized, http.StatusText(http.StatusUnauthorized))
 		return
 	}
+
+	response.JSON(w, http.StatusOK, nil)
 }
 
 // Register
