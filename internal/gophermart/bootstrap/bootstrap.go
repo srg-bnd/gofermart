@@ -5,6 +5,7 @@ import (
 	"ya41-56/cmd"
 	dbLocal "ya41-56/internal/gophermart/db"
 	"ya41-56/internal/gophermart/di"
+	commonErrors "ya41-56/internal/gophermart/errors"
 	"ya41-56/internal/gophermart/models"
 	"ya41-56/internal/gophermart/router"
 	"ya41-56/internal/gophermart/services"
@@ -14,12 +15,6 @@ import (
 
 	"github.com/go-chi/chi/v5"
 	"go.uber.org/zap"
-)
-
-var (
-	ErrInitDB         = "failed to init database"
-	ErrEmptySecretKey = "empty secret key for JWT"
-	ErrHTTPServer     = "failed to start HTTP server"
 )
 
 func Run() {
@@ -32,13 +27,13 @@ func Run() {
 	}, dbLocal.Migrate)
 
 	if dbConn == nil {
-		logger.L().Fatal(ErrInitDB)
+		logger.L().Fatal(commonErrors.ErrInitDB.Error())
 	}
 
 	userRepo := repositories.NewGormRepository[models.User](dbConn)
 
 	if cfg.JWTSecretKey == "" {
-		logger.L().Fatal(ErrEmptySecretKey)
+		logger.L().Fatal(commonErrors.ErrEmptySecretKey.Error())
 	}
 
 	r := router.RegisterRoutes(&di.AppContainer{
@@ -53,6 +48,6 @@ func Run() {
 
 	err := httpServer.ListenAndServe(cfg.Address, r)
 	if err != nil {
-		logger.L().Fatal(ErrHTTPServer, zap.Error(err))
+		logger.L().Fatal(commonErrors.ErrHTTPServer.Error(), zap.Error(err))
 	}
 }
