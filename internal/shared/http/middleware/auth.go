@@ -10,10 +10,10 @@ import (
 )
 
 type AuthMiddleware struct {
-	Auth services.AuthService
+	Auth *services.AuthService
 }
 
-func New(auth services.AuthService) *AuthMiddleware {
+func New(auth *services.AuthService) *AuthMiddleware {
 	return &AuthMiddleware{
 		Auth: auth,
 	}
@@ -35,7 +35,6 @@ func (m *AuthMiddleware) IsAuthenticated(next http.Handler) http.Handler {
 		}
 
 		ctx := r.Context()
-		// TODO: currentUser.ID as string
 		ctx = contextutil.WithUserID(ctx, strconv.Itoa(int(currentUser.ID)))
 
 		next.ServeHTTP(w, r.WithContext(ctx))

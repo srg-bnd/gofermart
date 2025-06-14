@@ -10,6 +10,8 @@ import (
 	"ya41-56/internal/shared/response"
 )
 
+const bearerPrefix = "Bearer "
+
 type AuthHandler struct {
 	Auth *services.AuthService
 }
@@ -63,7 +65,7 @@ func (h *AuthHandler) Login(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	w.Header().Set("Authorization", "Bearer "+jwtToken)
+	w.Header().Set("Authorization", bearerPrefix+jwtToken)
 	response.JSON(w, http.StatusOK, nil)
 }
 
@@ -104,6 +106,6 @@ func (h *AuthHandler) Register(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	w.Header().Set("Authorization", "Bearer "+jwtToken)
+	w.Header().Set("Authorization", bearerPrefix+jwtToken)
 	response.JSON(w, http.StatusOK, nil)
 }
