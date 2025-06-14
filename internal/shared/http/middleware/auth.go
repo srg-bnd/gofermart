@@ -36,7 +36,7 @@ func (m *AuthMiddleware) IsAuthenticated(next http.Handler) http.Handler {
 
 		ctx := r.Context()
 		// TODO: currentUser.ID as string
-		ctx = contextutil.WithUserID(ctx, strconv.FormatUint(uint64(currentUser.ID), 10))
+		ctx = contextutil.WithUserID(ctx, strconv.Itoa(int(currentUser.ID)))
 
 		next.ServeHTTP(w, r.WithContext(ctx))
 	})
