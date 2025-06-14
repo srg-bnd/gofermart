@@ -12,8 +12,6 @@
 *.out
 
 # Binaries
-gophermart
-accrual
 cmd/gophermart/main
 cmd/gophermart/gophermart
 cmd/accrual/main
