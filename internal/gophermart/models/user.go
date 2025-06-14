@@ -1,7 +1,6 @@
 package models
 
 import (
-	"github.com/google/uuid"
 	"time"
 )
 
@@ -11,7 +10,7 @@ type UserStatus int
 //const UserStatusActive UserStatus = 1
 
 type User struct {
-	ID           uuid.UUID  `gorm:"type:uuid;default:gen_random_uuid();primaryKey"`
+	ID           uint       `gorm:"primaryKey"`
 	Login        string     `gorm:"uniqueIndex;not null"`
 	Password     string     `gorm:"-" json:"-"`
 	PasswordHash string     `gorm:"not null" json:"-"`

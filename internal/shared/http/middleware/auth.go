@@ -2,6 +2,7 @@ package middleware
 
 import (
 	"net/http"
+	"strconv"
 	"strings"
 	"ya41-56/internal/gophermart/services"
 	"ya41-56/internal/shared/contextutil"
@@ -34,7 +35,8 @@ func (m *AuthMiddleware) IsAuthenticated(next http.Handler) http.Handler {
 		}
 
 		ctx := r.Context()
-		ctx = contextutil.WithUserID(ctx, currentUser.ID.String())
+		// TODO: currentUser.ID as string
+		ctx = contextutil.WithUserID(ctx, strconv.FormatUint(uint64(currentUser.ID), 10))
 
 		next.ServeHTTP(w, r.WithContext(ctx))
 	})
