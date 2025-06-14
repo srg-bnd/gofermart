@@ -61,6 +61,10 @@ func (s *AuthService) Login(ctx context.Context, login, password string) (string
 		return "", ErrInvalidCreds
 	}
 
+	if user.Status == models.UserStatusDisabled {
+		return "", ErrInvalidCreds
+	}
+
 	return s.BuildJWTString(user.Login)
 }
 
@@ -93,6 +97,7 @@ func (s *AuthService) Register(ctx context.Context, user *models.User) (string, 
 	}
 
 	user.PasswordHash = hashed
+	user.Status = models.UserStatusActive
 
 	if err := s.Users.Create(ctx, user); err != nil {
 		return "", err

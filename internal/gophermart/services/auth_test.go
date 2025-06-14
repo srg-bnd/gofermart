@@ -36,6 +36,7 @@ func TestLoginSuccess(t *testing.T) {
 	testUser := models.User{
 		Login:        "testuser",
 		PasswordHash: passwordHash,
+		Status:       models.UserStatusActive,
 	}
 	err = repo.Create(ctx, &testUser)
 	require.NoError(t, err)

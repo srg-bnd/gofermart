@@ -6,8 +6,10 @@ import (
 
 type UserStatus int
 
-//const UserStatusDisabled UserStatus = 0
-//const UserStatusActive UserStatus = 1
+const (
+	UserStatusDisabled UserStatus = 0
+	UserStatusActive   UserStatus = 1
+)
 
 type User struct {
 	ID           uint       `gorm:"primaryKey"`
