@@ -34,17 +34,17 @@ func (s *AuthService) Login(ctx context.Context, login, password string) (string
 		return "", commonErrors.ErrInvalidCreds
 	}
 
-	return s.TokenService.BuildJWTString(user.Login)
+	return s.TokenService.BuildJWTString(user.ID)
 }
 
-func (s *AuthService) ParseAndValidate(ctx context.Context, tokenString string) (*models.User, error) {
+func (s *AuthService) ParseAndValidate(tokenString string) (uint, error) {
 	claims := Claims{}
 	token, err := s.TokenService.ParseToken(&claims, tokenString)
 	if err != nil || !token.Valid {
-		return nil, commonErrors.ErrJWTToken
+		return 0, commonErrors.ErrJWTToken
 	}
 
-	return s.Users.FindByField(ctx, "login", claims.UserLogin)
+	return claims.UserID, nil
 }
 
 func (s *AuthService) Register(ctx context.Context, user *models.User) (string, error) {
@@ -65,5 +65,5 @@ func (s *AuthService) Register(ctx context.Context, user *models.User) (string, 
 		return "", err
 	}
 
-	return s.TokenService.BuildJWTString(user.Login)
+	return s.TokenService.BuildJWTString(user.ID)
 }

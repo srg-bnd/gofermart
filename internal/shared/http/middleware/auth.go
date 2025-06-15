@@ -27,8 +27,13 @@ func (m *AuthMiddleware) IsAuthenticated(next http.Handler) http.Handler {
 			return
 		}
 
-		token := strings.TrimPrefix(authHeader, "Bearer ")
-		currentUser, err := m.Auth.ParseAndValidate(r.Context(), token)
+		userID, err := m.Auth.ParseAndValidate(strings.TrimPrefix(authHeader, "Bearer "))
+		if err != nil {
+			response.Error(w, http.StatusUnauthorized, http.StatusText(http.StatusUnauthorized))
+			return
+		}
+
+		currentUser, err := m.Auth.Users.FindByField(r.Context(), "id", userID)
 		if err != nil {
 			response.Error(w, http.StatusUnauthorized, http.StatusText(http.StatusUnauthorized))
 			return

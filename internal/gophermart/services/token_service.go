@@ -15,7 +15,7 @@ type TokenService struct {
 
 type Claims struct {
 	jwt.RegisteredClaims
-	UserLogin string `json:"login"`
+	UserID uint `json:"id"`
 }
 
 func NewTokenService(secretKey string, tokenLifetime time.Duration) *TokenService {
@@ -25,12 +25,12 @@ func NewTokenService(secretKey string, tokenLifetime time.Duration) *TokenServic
 	}
 }
 
-func (s *TokenService) BuildJWTString(login string) (string, error) {
+func (s *TokenService) BuildJWTString(userID uint) (string, error) {
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, &Claims{
 		RegisteredClaims: jwt.RegisteredClaims{
 			ExpiresAt: jwt.NewNumericDate(time.Now().Add(s.tokenLifetime)),
 		},
-		UserLogin: login,
+		UserID: userID,
 	})
 
 	tokenString, err := token.SignedString([]byte(s.secretKey))

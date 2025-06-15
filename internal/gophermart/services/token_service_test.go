@@ -17,7 +17,7 @@ func TestBuildJWTString(t *testing.T) {
 	repo := repositories.NewGormRepository[models.User](db)
 
 	authService := services.NewAuthService(repo, services.NewTokenService("secretKey", 1*time.Hour))
-	token, err := authService.TokenService.BuildJWTString("login")
+	token, err := authService.TokenService.BuildJWTString(1)
 	assert.NoError(t, err)
 	assert.NotEmpty(t, token)
 }
@@ -43,7 +43,7 @@ func TestParseAndValidateSuccess(t *testing.T) {
 	assert.NoError(t, err)
 	assert.NotEmpty(t, token)
 
-	user, err := authService.ParseAndValidate(ctx, token)
+	userID, err := authService.ParseAndValidate(token)
 	assert.NoError(t, err)
-	assert.NotEmpty(t, user.Login)
+	assert.NotEqual(t, 0, userID)
 }
