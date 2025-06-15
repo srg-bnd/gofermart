@@ -4,6 +4,7 @@ import (
 	"context"
 	"strconv"
 	"testing"
+	"time"
 	"ya41-56/internal/gophermart/models"
 	"ya41-56/internal/gophermart/services"
 	"ya41-56/internal/shared/repositories"
@@ -15,7 +16,7 @@ func TestBuildJWTString(t *testing.T) {
 	db := setupTestDB(t)
 	repo := repositories.NewGormRepository[models.User](db)
 
-	authService := services.NewAuthService(repo, "secretKey")
+	authService := services.NewAuthService(repo, services.NewTokenService("secretKey", 1*time.Hour))
 	token, err := authService.TokenService.BuildJWTString("login")
 	assert.NoError(t, err)
 	assert.NotEmpty(t, token)
@@ -37,7 +38,7 @@ func TestParseAndValidateSuccess(t *testing.T) {
 	}
 
 	// Login
-	authService := services.NewAuthService(repo, "secretKey")
+	authService := services.NewAuthService(repo, services.NewTokenService("secretKey", 1*time.Hour))
 	token, err := authService.Register(ctx, &testUser)
 	assert.NoError(t, err)
 	assert.NotEmpty(t, token)

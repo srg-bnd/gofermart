@@ -4,6 +4,7 @@ import (
 	"context"
 	"strconv"
 	"testing"
+	"time"
 	"ya41-56/internal/gophermart/models"
 	"ya41-56/internal/gophermart/services"
 	"ya41-56/internal/shared/repositories"
@@ -30,7 +31,7 @@ func TestLoginSuccess(t *testing.T) {
 	require.NotZero(t, testUser.ID)
 
 	// Login
-	authService := services.NewAuthService(repo, "secretKey")
+	authService := services.NewAuthService(repo, services.NewTokenService("secretKey", 1*time.Hour))
 	token, err := authService.Login(ctx, testUser.Login, "password")
 	assert.NoError(t, err)
 	assert.NotEmpty(t, token)
@@ -50,7 +51,7 @@ func TestRegisterSuccess(t *testing.T) {
 		repo.Delete(ctx, strconv.Itoa(int(existUser.ID)))
 	}
 
-	authService := services.NewAuthService(repo, "secretKey")
+	authService := services.NewAuthService(repo, services.NewTokenService("secretKey", 1*time.Hour))
 	token, err := authService.Register(ctx, &newUser)
 	assert.NoError(t, err)
 	assert.NotEmpty(t, token)

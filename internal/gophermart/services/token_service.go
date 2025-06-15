@@ -8,7 +8,8 @@ import (
 )
 
 type TokenService struct {
-	secretKey string
+	secretKey     string
+	tokenLifetime time.Duration
 }
 
 type Claims struct {
@@ -16,18 +17,17 @@ type Claims struct {
 	UserLogin string `json:"login"`
 }
 
-const DefaultTokenExp = time.Hour * 1
-
-func NewTokenService(secretKey string) *TokenService {
+func NewTokenService(secretKey string, tokenLifetime time.Duration) *TokenService {
 	return &TokenService{
-		secretKey: secretKey,
+		secretKey:     secretKey,
+		tokenLifetime: tokenLifetime,
 	}
 }
 
 func (s *TokenService) BuildJWTString(login string) (string, error) {
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, &Claims{
 		RegisteredClaims: jwt.RegisteredClaims{
-			ExpiresAt: jwt.NewNumericDate(time.Now().Add(DefaultTokenExp)),
+			ExpiresAt: jwt.NewNumericDate(time.Now().Add(s.tokenLifetime)),
 		},
 		UserLogin: login,
 	})

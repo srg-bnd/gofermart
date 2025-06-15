@@ -38,7 +38,7 @@ func Run() {
 
 	r := router.RegisterRoutes(&di.AppContainer{
 		UserRepo: userRepo,
-		Auth:     services.NewAuthService(userRepo, cfg.JWTSecretKey),
+		Auth:     services.NewAuthService(userRepo, services.NewTokenService(cfg.JWTSecretKey, cfg.JWTLifetime)),
 		Router:   chi.NewRouter(),
 		Cfg:      cfg,
 		Gorm:     dbConn,

@@ -12,10 +12,10 @@ type AuthService struct {
 	TokenService *TokenService
 }
 
-func NewAuthService(users repositories.Repository[models.User], secretKey string) *AuthService {
+func NewAuthService(users repositories.Repository[models.User], tokenService *TokenService) *AuthService {
 	return &AuthService{
 		Users:        users,
-		TokenService: NewTokenService(secretKey),
+		TokenService: tokenService,
 	}
 }
 

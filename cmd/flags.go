@@ -20,6 +20,7 @@ type Config struct {
 	WorkersCount    int               `env:"WORKERS_COUNT" envDefault:"5"`
 	ShutdownTimeout time.Duration     `env:"SHUTDOWN_TIMEOUT" envDefault:"5s"`
 	JWTSecretKey    string            `env:"JWT_SECRET_KEY"`
+	JWTLifetime     time.Duration     `env:"JWT_LIFETIME" envDefault:"1h"`
 }
 
 func ParseFlags() Config {
