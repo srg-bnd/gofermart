@@ -35,7 +35,7 @@ func RegisterRoutes(appContainer *di.AppContainer) http.Handler {
 			r.Post("/register", authHandler.Register)
 
 			r.Group(func(r chi.Router) {
-				r.Use(authMiddleware.IsAuthenticated)
+				r.Use(authMiddleware.WithAuth)
 
 				r.Get("/me", authHandler.GetMe)
 				r.Get("/orders", usersHandler.List)

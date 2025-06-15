@@ -19,7 +19,7 @@ func New(auth *services.AuthService) *AuthMiddleware {
 	}
 }
 
-func (m *AuthMiddleware) IsAuthenticated(next http.Handler) http.Handler {
+func (m *AuthMiddleware) WithAuth(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		authHeader := r.Header.Get("Authorization")
 		if !strings.HasPrefix(authHeader, "Bearer ") {
