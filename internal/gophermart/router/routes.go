@@ -18,8 +18,8 @@ func RegisterRoutes(appContainer *di.AppContainer) http.Handler {
 	usersHandler := handlers.NewUsersHandler(appContainer.Auth)
 
 	appContainer.Router.Use(cors.Handler(cors.Options{
-		AllowedOrigins:   []string{"asdasd"},
-		AllowedMethods:   []string{"DELETE"},
+		AllowedOrigins:   appContainer.Cfg.CorsOrigins,
+		AllowedMethods:   []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
 		AllowedHeaders:   []string{"Accept", "Authorization", "Content-Type", "X-CSRF-Token"},
 		ExposedHeaders:   []string{"Link"},
 		AllowCredentials: true,
