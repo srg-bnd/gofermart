@@ -43,7 +43,7 @@ func TestParseAndValidateSuccess(t *testing.T) {
 	assert.NoError(t, err)
 	assert.NotEmpty(t, token)
 
-	userID, err := authService.ParseAndValidate(token)
+	userID, err := authService.ParseAndValidate(ctx, token)
 	assert.NoError(t, err)
 	assert.NotEqual(t, 0, userID)
 }

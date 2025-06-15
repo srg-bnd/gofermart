@@ -11,7 +11,7 @@ import (
 )
 
 type TokenParser interface {
-	ParseAndValidate(string) (string, error)
+	ParseAndValidate(context.Context, string) (string, error)
 }
 
 type UserFinder interface {
@@ -38,7 +38,7 @@ func (m *AuthMiddleware) WithAuth(next http.Handler) http.Handler {
 			return
 		}
 
-		userID, err := m.TokenService.ParseAndValidate(strings.TrimPrefix(authHeader, "Bearer "))
+		userID, err := m.TokenService.ParseAndValidate(r.Context(), strings.TrimPrefix(authHeader, "Bearer "))
 		if err != nil {
 			response.Error(w, http.StatusUnauthorized, http.StatusText(http.StatusUnauthorized))
 			return
