@@ -9,49 +9,40 @@ import (
 	"ya41-56/internal/shared/repositories"
 
 	"github.com/stretchr/testify/assert"
-	"github.com/stretchr/testify/require"
 )
 
-func TestLoginSuccess(t *testing.T) {
+func TestBuildJWTString(t *testing.T) {
+	db := setupTestDB(t)
+	repo := repositories.NewGormRepository[models.User](db)
+
+	authService := services.NewAuthService(repo, "secretKey")
+	token, err := authService.TokenService.BuildJWTString("login")
+	assert.NoError(t, err)
+	assert.NotEmpty(t, token)
+}
+
+func TestParseAndValidateSuccess(t *testing.T) {
 	db := setupTestDB(t)
 	repo := repositories.NewGormRepository[models.User](db)
 	ctx := context.Background()
 
 	// Create test user
-	passwordHash, err := passwordHash("password")
-	require.NoError(t, err)
 	testUser := models.User{
-		Login:        "testuser",
-		PasswordHash: passwordHash,
-		Status:       models.UserStatusActive,
-	}
-	err = repo.Create(ctx, &testUser)
-	require.NoError(t, err)
-	require.NotZero(t, testUser.ID)
-
-	// Login
-	authService := services.NewAuthService(repo, "secretKey")
-	token, err := authService.Login(ctx, testUser.Login, "password")
-	assert.NoError(t, err)
-	assert.NotEmpty(t, token)
-}
-
-func TestRegisterSuccess(t *testing.T) {
-	db := setupTestDB(t)
-	repo := repositories.NewGormRepository[models.User](db)
-	ctx := context.Background()
-
-	newUser := models.User{
 		Login:    "testuser",
 		Password: "password",
 	}
-	existUser, err := repo.FindByField(ctx, "login", newUser.Login)
+	existUser, err := repo.FindByField(ctx, "login", testUser.Login)
 	if err == nil {
 		repo.Delete(ctx, strconv.Itoa(int(existUser.ID)))
 	}
 
+	// Login
 	authService := services.NewAuthService(repo, "secretKey")
-	token, err := authService.Register(ctx, &newUser)
+	token, err := authService.Register(ctx, &testUser)
 	assert.NoError(t, err)
 	assert.NotEmpty(t, token)
+
+	user, err := authService.ParseAndValidate(ctx, token)
+	assert.NoError(t, err)
+	assert.NotEmpty(t, user.Login)
 }

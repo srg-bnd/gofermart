@@ -2,53 +2,21 @@ package services
 
 import (
 	"context"
-	"errors"
-	"fmt"
-	"time"
 	"ya41-56/internal/gophermart/models"
 	"ya41-56/internal/shared/bcryptutil"
 	"ya41-56/internal/shared/repositories"
-
-	"github.com/golang-jwt/jwt/v4"
 )
 
 type AuthService struct {
-	Users     repositories.Repository[models.User]
-	secretKey string
+	Users        repositories.Repository[models.User]
+	TokenService *TokenService
 }
-
-type Claims struct {
-	jwt.RegisteredClaims
-	UserLogin string `json:"login"`
-}
-
-const DefaultTokenExp = time.Hour * 1
-
-var ErrInvalidCreds = errors.New("invalid credentials")
-var ErrUserExists = errors.New("user already exists")
-var ErrJWTToken = errors.New("invalid JWT token")
 
 func NewAuthService(users repositories.Repository[models.User], secretKey string) *AuthService {
 	return &AuthService{
-		Users:     users,
-		secretKey: secretKey,
+		Users:        users,
+		TokenService: NewTokenService(secretKey),
 	}
-}
-
-func (s *AuthService) BuildJWTString(login string) (string, error) {
-	token := jwt.NewWithClaims(jwt.SigningMethodHS256, &Claims{
-		RegisteredClaims: jwt.RegisteredClaims{
-			ExpiresAt: jwt.NewNumericDate(time.Now().Add(DefaultTokenExp)),
-		},
-		UserLogin: login,
-	})
-
-	tokenString, err := token.SignedString([]byte(s.secretKey))
-	if err != nil {
-		return "", ErrJWTToken
-	}
-
-	return tokenString, nil
 }
 
 func (s *AuthService) Login(ctx context.Context, login, password string) (string, error) {
@@ -65,19 +33,12 @@ func (s *AuthService) Login(ctx context.Context, login, password string) (string
 		return "", ErrInvalidCreds
 	}
 
-	return s.BuildJWTString(user.Login)
+	return s.TokenService.BuildJWTString(user.Login)
 }
 
-func (s *AuthService) ParseAndValidateToken(ctx context.Context, tokenString string) (*models.User, error) {
-	claims := &Claims{}
-	token, err := jwt.ParseWithClaims(tokenString, claims,
-		func(t *jwt.Token) (interface{}, error) {
-			if _, ok := t.Method.(*jwt.SigningMethodHMAC); !ok {
-				return nil, fmt.Errorf("unexpected signing method: %v", t.Header["alg"])
-			}
-			return []byte(s.secretKey), nil
-		})
-
+func (s *AuthService) ParseAndValidate(ctx context.Context, tokenString string) (*models.User, error) {
+	claims := Claims{}
+	token, err := s.TokenService.ParseToken(&claims, tokenString)
 	if err != nil || !token.Valid {
 		return nil, ErrJWTToken
 	}
@@ -103,5 +64,5 @@ func (s *AuthService) Register(ctx context.Context, user *models.User) (string, 
 		return "", err
 	}
 
-	return s.BuildJWTString(user.Login)
+	return s.TokenService.BuildJWTString(user.Login)
 }

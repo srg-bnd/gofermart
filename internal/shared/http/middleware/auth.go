@@ -28,7 +28,7 @@ func (m *AuthMiddleware) IsAuthenticated(next http.Handler) http.Handler {
 		}
 
 		token := strings.TrimPrefix(authHeader, "Bearer ")
-		currentUser, err := m.Auth.ParseAndValidateToken(r.Context(), token)
+		currentUser, err := m.Auth.ParseAndValidate(r.Context(), token)
 		if err != nil {
 			response.Error(w, http.StatusUnauthorized, http.StatusText(http.StatusUnauthorized))
 			return
