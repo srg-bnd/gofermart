@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"strconv"
 	"time"
-	commonErrors "ya41-56/internal/gophermart/errors"
+	"ya41-56/internal/gophermart/customErrors"
 
 	"github.com/golang-jwt/jwt/v4"
 )
@@ -36,7 +36,7 @@ func (s *TokenService) BuildJWTString(userID uint) (string, error) {
 
 	tokenString, err := token.SignedString([]byte(s.secretKey))
 	if err != nil {
-		return "", commonErrors.ErrJWTToken
+		return "", customErrors.ErrJWTToken
 	}
 
 	return tokenString, nil
@@ -52,7 +52,7 @@ func (s *TokenService) ParseToken(claims *Claims, tokenString string) (*jwt.Toke
 		})
 
 	if err != nil || !token.Valid {
-		return nil, commonErrors.ErrJWTToken
+		return nil, customErrors.ErrJWTToken
 	}
 
 	return token, nil

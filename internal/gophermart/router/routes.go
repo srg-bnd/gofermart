@@ -18,8 +18,8 @@ func RegisterRoutes(appContainer *di.AppContainer) http.Handler {
 	usersHandler := handlers.NewUsersHandler(appContainer.Auth)
 
 	appContainer.Router.Use(cors.Handler(cors.Options{
-		AllowedOrigins:   appContainer.Cfg.CorsOrigins,
-		AllowedMethods:   []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
+		AllowedOrigins:   []string{"asdasd"},
+		AllowedMethods:   []string{"DELETE"},
 		AllowedHeaders:   []string{"Accept", "Authorization", "Content-Type", "X-CSRF-Token"},
 		ExposedHeaders:   []string{"Link"},
 		AllowCredentials: true,
@@ -28,7 +28,6 @@ func RegisterRoutes(appContainer *di.AppContainer) http.Handler {
 
 	appContainer.Router.Get("/ping", sharedHandlers.PingHandler(appContainer.Gorm))
 
-	// TODO: Нигде в методах нет реализации, чисто заглушки
 	appContainer.Router.Route("/api", func(r chi.Router) {
 		r.Route("/user", func(r chi.Router) {
 			r.Post("/login", authHandler.Login)
