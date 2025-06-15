@@ -3,7 +3,7 @@ package bootstrap
 import (
 	httpServer "net/http"
 	"ya41-56/cmd"
-	"ya41-56/internal/gophermart/customErrors"
+	"ya41-56/internal/gophermart/customerrors"
 	dbLocal "ya41-56/internal/gophermart/db"
 	"ya41-56/internal/gophermart/di"
 	"ya41-56/internal/gophermart/models"
@@ -27,13 +27,13 @@ func Run() {
 	}, dbLocal.Migrate)
 
 	if dbConn == nil {
-		logger.L().Fatal(customErrors.ErrInitDB.Error())
+		logger.L().Fatal(customerrors.ErrInitDB.Error())
 	}
 
 	userRepo := repositories.NewGormRepository[models.User](dbConn)
 
 	if cfg.JWTSecretKey == "" {
-		logger.L().Fatal(customErrors.ErrEmptySecretKey.Error())
+		logger.L().Fatal(customerrors.ErrEmptySecretKey.Error())
 	}
 
 	r := router.RegisterRoutes(&di.AppContainer{
@@ -48,6 +48,6 @@ func Run() {
 
 	err := httpServer.ListenAndServe(cfg.Address, r)
 	if err != nil {
-		logger.L().Fatal(customErrors.ErrHTTPServer.Error(), zap.Error(err))
+		logger.L().Fatal(customerrors.ErrHTTPServer.Error(), zap.Error(err))
 	}
 }
