@@ -12,7 +12,7 @@ import (
 )
 
 func RegisterRoutes(appContainer *di.AppContainer) http.Handler {
-	authMiddleware := middleware.New(appContainer.Auth)
+	authMiddleware := middleware.New(appContainer.Auth, appContainer.UserRepo)
 
 	authHandler := handlers.NewAuthHandler(appContainer.Auth)
 	usersHandler := handlers.NewUsersHandler(appContainer.Auth)

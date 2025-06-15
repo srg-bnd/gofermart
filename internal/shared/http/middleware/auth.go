@@ -1,21 +1,32 @@
 package middleware
 
 import (
+	"context"
 	"net/http"
 	"strconv"
 	"strings"
-	"ya41-56/internal/gophermart/services"
+	"ya41-56/internal/gophermart/models"
 	"ya41-56/internal/shared/contextutil"
 	"ya41-56/internal/shared/response"
 )
 
-type AuthMiddleware struct {
-	Auth *services.AuthService
+type TokenParser interface {
+	ParseAndValidate(string) (string, error)
 }
 
-func New(auth *services.AuthService) *AuthMiddleware {
+type UserFinder interface {
+	FindByID(context.Context, string) (*models.User, error)
+}
+
+type AuthMiddleware struct {
+	TokenService TokenParser
+	UserService  UserFinder
+}
+
+func New(tokenParser TokenParser, userFinder UserFinder) *AuthMiddleware {
 	return &AuthMiddleware{
-		Auth: auth,
+		TokenService: tokenParser,
+		UserService:  userFinder,
 	}
 }
 
@@ -27,13 +38,13 @@ func (m *AuthMiddleware) WithAuth(next http.Handler) http.Handler {
 			return
 		}
 
-		userID, err := m.Auth.ParseAndValidate(strings.TrimPrefix(authHeader, "Bearer "))
+		userID, err := m.TokenService.ParseAndValidate(strings.TrimPrefix(authHeader, "Bearer "))
 		if err != nil {
 			response.Error(w, http.StatusUnauthorized, http.StatusText(http.StatusUnauthorized))
 			return
 		}
 
-		currentUser, err := m.Auth.Users.FindByField(r.Context(), "id", userID)
+		currentUser, err := m.UserService.FindByID(r.Context(), userID)
 		if err != nil {
 			response.Error(w, http.StatusUnauthorized, http.StatusText(http.StatusUnauthorized))
 			return

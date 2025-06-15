@@ -2,6 +2,7 @@ package services
 
 import (
 	"fmt"
+	"strconv"
 	"time"
 	commonErrors "ya41-56/internal/gophermart/errors"
 
@@ -15,7 +16,7 @@ type TokenService struct {
 
 type Claims struct {
 	jwt.RegisteredClaims
-	UserID uint `json:"id"`
+	UserID string `json:"id"`
 }
 
 func NewTokenService(secretKey string, tokenLifetime time.Duration) *TokenService {
@@ -30,7 +31,7 @@ func (s *TokenService) BuildJWTString(userID uint) (string, error) {
 		RegisteredClaims: jwt.RegisteredClaims{
 			ExpiresAt: jwt.NewNumericDate(time.Now().Add(s.tokenLifetime)),
 		},
-		UserID: userID,
+		UserID: strconv.Itoa(int(userID)),
 	})
 
 	tokenString, err := token.SignedString([]byte(s.secretKey))

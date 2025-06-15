@@ -37,11 +37,11 @@ func (s *AuthService) Login(ctx context.Context, login, password string) (string
 	return s.TokenService.BuildJWTString(user.ID)
 }
 
-func (s *AuthService) ParseAndValidate(tokenString string) (uint, error) {
+func (s *AuthService) ParseAndValidate(tokenString string) (string, error) {
 	claims := Claims{}
 	token, err := s.TokenService.ParseToken(&claims, tokenString)
 	if err != nil || !token.Valid {
-		return 0, commonErrors.ErrJWTToken
+		return "", commonErrors.ErrJWTToken
 	}
 
 	return claims.UserID, nil
