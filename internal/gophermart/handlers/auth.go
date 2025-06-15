@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"errors"
 	"net/http"
+	commonErrors "ya41-56/internal/gophermart/errors"
 	"ya41-56/internal/gophermart/models"
 	"ya41-56/internal/gophermart/services"
 	"ya41-56/internal/shared/contextutil"
@@ -57,7 +58,7 @@ func (h *AuthHandler) Login(w http.ResponseWriter, r *http.Request) {
 
 	jwtToken, err := h.Auth.Login(r.Context(), req.Login, req.Password)
 	if err != nil {
-		if errors.Is(err, services.ErrInvalidCreds) {
+		if errors.Is(err, commonErrors.ErrInvalidCreds) {
 			response.Error(w, http.StatusUnauthorized, err.Error())
 		} else {
 			response.Error(w, http.StatusInternalServerError, err.Error())
@@ -98,7 +99,7 @@ func (h *AuthHandler) Register(w http.ResponseWriter, r *http.Request) {
 		Password: req.Password,
 	})
 	if err != nil {
-		if errors.Is(err, services.ErrUserExists) {
+		if errors.Is(err, commonErrors.ErrUserExists) {
 			response.Error(w, http.StatusConflict, err.Error())
 		} else {
 			response.Error(w, http.StatusInternalServerError, err.Error())

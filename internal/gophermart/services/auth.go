@@ -2,6 +2,7 @@ package services
 
 import (
 	"context"
+	commonErrors "ya41-56/internal/gophermart/errors"
 	"ya41-56/internal/gophermart/models"
 	"ya41-56/internal/shared/bcryptutil"
 	"ya41-56/internal/shared/repositories"
@@ -22,15 +23,15 @@ func NewAuthService(users repositories.Repository[models.User], tokenService *To
 func (s *AuthService) Login(ctx context.Context, login, password string) (string, error) {
 	user, err := s.Users.FindByField(ctx, "login", login)
 	if err != nil {
-		return "", ErrInvalidCreds
+		return "", commonErrors.ErrInvalidCreds
 	}
 
 	if err = bcryptutil.CheckHash(password, user.PasswordHash); err != nil {
-		return "", ErrInvalidCreds
+		return "", commonErrors.ErrInvalidCreds
 	}
 
 	if user.Status == models.UserStatusDisabled {
-		return "", ErrInvalidCreds
+		return "", commonErrors.ErrInvalidCreds
 	}
 
 	return s.TokenService.BuildJWTString(user.Login)
@@ -40,7 +41,7 @@ func (s *AuthService) ParseAndValidate(ctx context.Context, tokenString string) 
 	claims := Claims{}
 	token, err := s.TokenService.ParseToken(&claims, tokenString)
 	if err != nil || !token.Valid {
-		return nil, ErrJWTToken
+		return nil, commonErrors.ErrJWTToken
 	}
 
 	return s.Users.FindByField(ctx, "login", claims.UserLogin)
@@ -49,7 +50,7 @@ func (s *AuthService) ParseAndValidate(ctx context.Context, tokenString string) 
 func (s *AuthService) Register(ctx context.Context, user *models.User) (string, error) {
 	_, err := s.Users.FindByField(ctx, "login", user.Login)
 	if err == nil {
-		return "", ErrUserExists
+		return "", commonErrors.ErrUserExists
 	}
 
 	hashed, err := bcryptutil.Hash(user.Password)

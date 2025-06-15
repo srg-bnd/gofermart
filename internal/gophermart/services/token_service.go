@@ -3,6 +3,7 @@ package services
 import (
 	"fmt"
 	"time"
+	commonErrors "ya41-56/internal/gophermart/errors"
 
 	"github.com/golang-jwt/jwt/v4"
 )
@@ -34,7 +35,7 @@ func (s *TokenService) BuildJWTString(login string) (string, error) {
 
 	tokenString, err := token.SignedString([]byte(s.secretKey))
 	if err != nil {
-		return "", ErrJWTToken
+		return "", commonErrors.ErrJWTToken
 	}
 
 	return tokenString, nil
@@ -50,7 +51,7 @@ func (s *TokenService) ParseToken(claims *Claims, tokenString string) (*jwt.Toke
 		})
 
 	if err != nil || !token.Valid {
-		return nil, ErrJWTToken
+		return nil, commonErrors.ErrJWTToken
 	}
 
 	return token, nil
