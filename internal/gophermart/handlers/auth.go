@@ -3,7 +3,7 @@ package handlers
 import (
 	"errors"
 	"net/http"
-	"ya41-56/internal/gophermart/customerrors"
+	"ya41-56/internal/gophermart/customerror"
 	"ya41-56/internal/gophermart/models"
 	"ya41-56/internal/gophermart/services"
 	"ya41-56/internal/shared/contextutil"
@@ -58,7 +58,7 @@ func (h *AuthHandler) Login(w http.ResponseWriter, r *http.Request) {
 
 	jwtToken, err := h.Auth.Login(r.Context(), req.Login, req.Password)
 	if err != nil {
-		if errors.Is(err, customerrors.ErrInvalidCreds) {
+		if errors.Is(err, customerror.ErrInvalidCreds) {
 			response.Error(w, http.StatusUnauthorized, err.Error())
 		} else {
 			response.Error(w, http.StatusInternalServerError, err.Error())
@@ -99,7 +99,7 @@ func (h *AuthHandler) Register(w http.ResponseWriter, r *http.Request) {
 		Password: req.Password,
 	})
 	if err != nil {
-		if errors.Is(err, customerrors.ErrUserExists) {
+		if errors.Is(err, customerror.ErrUserExists) {
 			response.Error(w, http.StatusConflict, err.Error())
 		} else {
 			response.Error(w, http.StatusInternalServerError, err.Error())
