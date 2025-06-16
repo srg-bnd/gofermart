@@ -1,14 +1,14 @@
 TEST?=$$(go list ./... | grep -v 'vendor' | grep -v 'env' | grep -v 'utils')
 NAME=ya41-56
 VERSION=0.0.1
-BINARY_SERVER=server
+BINARY_GOPHERMART=gophermart
 BINARY_ACCRUAL=accrual
 OS_ARCH=darwin_amd64
 COMBINED_FILE := combined.go
 
 default: build
 
-build: build_server build
+build: build_gophermart build_accrual
 
 combine:
 	@echo "Combining Go files into $(COMBINED_FILE)..."
@@ -28,11 +28,11 @@ combine:
 build_accrual:
 	go build -o ${BINARY_ACCRUAL} cmd/accrual/main.go
 
-build_server:
-	go build -o ${BINARY_SERVER} cmd/gophermart/main.go
+build_gophermart:
+	go build -o ${BINARY_GOPHERMART} cmd/gophermart/main.go
 
-test_server:
-	go test ./... -timeout 60m --tags=server -v
+test_gophermart:
+	go test ./... -timeout 60m --tags=gophermart -v
 
 test_accrual:
 	go test ./... -timeout 60m --tags=accrual -v
@@ -40,14 +40,26 @@ test_accrual:
 run_test_mart:
 	./gophermarttest \
 		-test.v -test.run=^TestGophermart$ \
-		-gophermart-binary-path=./server \
+		-gophermart-binary-path=./gophermart \
 		-gophermart-host=localhost \
 		-gophermart-port=8080 \
-		-gophermart-database-uri="postgres://myuser:mypassword@localhost:5432/mydb" \
+		-gophermart-database-uri="postgres://myuser:mypassword@localhost:5432/mydatabase" \
 		-accrual-binary-path=./accrual \
 		-accrual-host=localhost \
 		-accrual-port=41222 \
-		-accrual-database-uri="postgres://myuser:mypassword@localhost:5432/mydb"
+		-accrual-database-uri="postgres://myuser:mypassword@localhost:5432/mydatabase"
+
+run_test_mart_original:
+	./gophermarttest-darwin-arm64 \
+		-test.v -test.run=^TestGophermart$ \
+		-gophermart-binary-path=./gophermart \
+		-gophermart-host=localhost \
+		-gophermart-port=8080 \
+		-gophermart-database-uri="postgres://myuser:mypassword@localhost:5432/mydatabase?sslmode=disable" \
+		-accrual-binary-path=./accrual \
+		-accrual-host=localhost \
+		-accrual-port=41222 \
+		-accrual-database-uri="postgres://myuser:mypassword@localhost:5432/mydatabase?sslmode=disable"
 
 lint:
 	golangci-lint run ./...
