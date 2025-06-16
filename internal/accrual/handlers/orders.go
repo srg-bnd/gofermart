@@ -3,7 +3,6 @@ package handlers
 import (
 	"context"
 	"errors"
-	"fmt"
 	"github.com/go-chi/chi/v5"
 	"gorm.io/gorm"
 	"net/http"
@@ -42,10 +41,10 @@ func (h *OrdersHandler) GetOrderByNumber(w http.ResponseWriter, r *http.Request)
 		}
 		return
 	} else {
-		response.JSON(w, http.StatusOK, map[string]string{
+		response.JSON(w, http.StatusOK, map[string]interface{}{
 			"order":   orderInstance.Number,
 			"status":  orderInstance.Status,
-			"accrual": fmt.Sprintf("%.2f", orderInstance.Accrual),
+			"accrual": orderInstance.Accrual,
 		})
 	}
 }

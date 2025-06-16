@@ -7,7 +7,6 @@ import (
 	"go.uber.org/zap"
 	"io"
 	"net/http"
-	"strconv"
 	"time"
 	"ya41-56/internal/shared/logger"
 
@@ -50,9 +49,9 @@ func (f *AccrualFetcher) RunWorkers(n int) {
 }
 
 type accrualResponse struct {
-	Order   string `json:"order"`
-	Status  string `json:"status"`
-	Accrual string `json:"accrual"`
+	Order   string  `json:"order"`
+	Status  string  `json:"status"`
+	Accrual float64 `json:"accrual"`
 }
 
 func (f *AccrualFetcher) ProcessOrder(ctx context.Context, order *models.Order) {
@@ -134,11 +133,7 @@ func (f *AccrualFetcher) fetchAccrualResponse(ctx context.Context, number string
 }
 
 func applyAccrualResult(order *models.Order, result *accrualResponse) error {
-	accrualFloat, err := strconv.ParseFloat(result.Accrual, 64)
-	if err != nil {
-		return fmt.Errorf("invalid accrual float: %w", err)
-	}
 	order.Status = result.Status
-	order.Accrual = accrualFloat
+	order.Accrual = float32(result.Accrual)
 	return nil
 }
