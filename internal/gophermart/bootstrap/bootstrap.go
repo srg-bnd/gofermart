@@ -1,6 +1,8 @@
 package bootstrap
 
 import (
+	"github.com/go-chi/chi/v5"
+	"go.uber.org/zap"
 	httpServer "net/http"
 	"ya41-56/cmd"
 	"ya41-56/internal/gophermart/customerror"
@@ -13,9 +15,6 @@ import (
 	"ya41-56/internal/shared/db"
 	"ya41-56/internal/shared/logger"
 	"ya41-56/internal/shared/repositories"
-
-	"github.com/go-chi/chi/v5"
-	"go.uber.org/zap"
 )
 
 func Run() {

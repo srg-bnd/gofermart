@@ -2,14 +2,13 @@ package cmd
 
 import (
 	"fmt"
+	"github.com/caarlos0/env/v11"
+	"github.com/joho/godotenv"
 	"github.com/spf13/pflag"
 	"log"
 	"os"
 	"time"
 	"ya41-56/internal/shared/logger"
-
-	"github.com/caarlos0/env/v11"
-	"github.com/joho/godotenv"
 )
 
 type Config struct {
