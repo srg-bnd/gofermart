@@ -32,10 +32,10 @@ func Run() {
 
 	userRepo := repositories.NewGormRepository[models.User](dbConn)
 
-	cfg.JWTSecretKey = "SecretKey"
-	// if cfg.JWTSecretKey == "" {
-	// 	logger.L().Fatal(customerror.ErrEmptySecretKey.Error())
-	// }
+	if cfg.JWTSecretKey == "" {
+		logger.L().Fatal(customerror.ErrEmptySecretKey.Error())
+		cfg.JWTSecretKey = "SecretKey"
+	}
 
 	r := router.RegisterRoutes(&di.AppContainer{
 		UserRepo: userRepo,
