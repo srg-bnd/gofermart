@@ -7,7 +7,8 @@ var (
 	ErrEmptySecretKey = errors.New("empty secret key for JWT")
 	ErrHTTPServer     = errors.New("failed to start HTTP server")
 
-	ErrInvalidCreds = errors.New("invalid credentials")
-	ErrUserExists   = errors.New("user already exists")
-	ErrJWTToken     = errors.New("invalid JWT token")
+	ErrInvalidCreds         = errors.New("invalid credentials")
+	ErrUserExists           = errors.New("user already exists")
+	ErrJWTToken             = errors.New("invalid JWT token")
+	ErrGenerateRandomString = errors.New("failed to generate random string")
 )

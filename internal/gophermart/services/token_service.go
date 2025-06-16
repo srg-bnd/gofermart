@@ -1,7 +1,9 @@
 package services
 
 import (
+	"crypto/rand"
 	"fmt"
+	"math/big"
 	"strconv"
 	"time"
 	"ya41-56/internal/gophermart/customerror"
@@ -56,4 +58,17 @@ func (s *TokenService) ParseToken(claims *Claims, tokenString string) (*jwt.Toke
 	}
 
 	return token, nil
+}
+
+func (s *TokenService) GenerateRandomString() (string, error) {
+	const chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
+	b := make([]byte, 32)
+	for i := range b {
+		r, err := rand.Int(rand.Reader, big.NewInt(int64(len(chars))))
+		if err != nil {
+			return "", err
+		}
+		b[i] = chars[r.Int64()]
+	}
+	return string(b), nil
 }

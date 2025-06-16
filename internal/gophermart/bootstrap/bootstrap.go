@@ -31,15 +31,20 @@ func Run() {
 	}
 
 	userRepo := repositories.NewGormRepository[models.User](dbConn)
+	tokenService := services.NewTokenService(cfg.JWTSecretKey, cfg.JWTLifetime)
 
 	if cfg.JWTSecretKey == "" {
-		logger.L().Fatal(customerror.ErrEmptySecretKey.Error())
-		cfg.JWTSecretKey = "SecretKey"
+		logger.L().Info(customerror.ErrEmptySecretKey.Error())
+		var err error
+		cfg.JWTSecretKey, err = tokenService.GenerateRandomString()
+		if err != nil {
+			logger.L().Fatal(customerror.ErrGenerateRandomString.Error(), zap.Error(err))
+		}
 	}
 
 	r := router.RegisterRoutes(&di.AppContainer{
 		UserRepo: userRepo,
-		Auth:     services.NewAuthService(userRepo, services.NewTokenService(cfg.JWTSecretKey, cfg.JWTLifetime)),
+		Auth:     services.NewAuthService(userRepo, tokenService),
 		Router:   chi.NewRouter(),
 		Cfg:      cfg,
 		Gorm:     dbConn,
