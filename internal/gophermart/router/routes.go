@@ -1,14 +1,13 @@
 package router
 
 import (
+	"github.com/go-chi/chi/v5"
+	"github.com/go-chi/cors"
 	"net/http"
 	"ya41-56/internal/gophermart/di"
 	"ya41-56/internal/gophermart/handlers"
 	sharedHandlers "ya41-56/internal/shared/handlers"
 	"ya41-56/internal/shared/http/middleware"
-
-	"github.com/go-chi/chi/v5"
-	"github.com/go-chi/cors"
 )
 
 func RegisterRoutes(appContainer *di.AppContainer) http.Handler {
@@ -16,6 +15,7 @@ func RegisterRoutes(appContainer *di.AppContainer) http.Handler {
 
 	authHandler := handlers.NewAuthHandler(appContainer.Auth)
 	usersHandler := handlers.NewUsersHandler(appContainer.Auth)
+	ordersHandler := handlers.NewOrdersHandler(appContainer.OrderRepo, appContainer.FetchPool)
 
 	appContainer.Router.Use(cors.Handler(cors.Options{
 		AllowedOrigins:   appContainer.Cfg.CorsOrigins,
@@ -37,8 +37,8 @@ func RegisterRoutes(appContainer *di.AppContainer) http.Handler {
 				r.Use(authMiddleware.WithAuth)
 
 				r.Get("/me", authHandler.GetMe)
-				r.Get("/orders", usersHandler.List)
-				r.Post("/orders", usersHandler.List)
+				r.Get("/orders", ordersHandler.List)
+				r.Post("/orders", ordersHandler.Upload)
 				r.Get("/balance", usersHandler.List)
 				r.Post("/balance/withdraw", usersHandler.List)
 				r.Get("/withdrawals", usersHandler.List)

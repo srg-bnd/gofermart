@@ -2,7 +2,6 @@ package handlers
 
 import (
 	"context"
-	"encoding/json"
 	"errors"
 	"fmt"
 	"github.com/go-chi/chi/v5"
@@ -10,6 +9,7 @@ import (
 	"net/http"
 	"ya41-56/internal/accrual/models"
 	"ya41-56/internal/accrual/worker"
+	"ya41-56/internal/shared/httputil"
 	"ya41-56/internal/shared/luhn"
 	"ya41-56/internal/shared/repositories"
 	"ya41-56/internal/shared/response"
@@ -29,7 +29,7 @@ func NewOrdersHandler(repo repositories.Repository[models.Order], processor *wor
 
 func (h *OrdersHandler) GetOrderByNumber(w http.ResponseWriter, r *http.Request) {
 	orderNumber := chi.URLParam(r, "number")
-	if orderNumber == "" {
+	if orderNumber == "" || !luhn.IsValidLuhn(orderNumber) {
 		response.Error(w, http.StatusBadRequest, "missing order number")
 		return
 	}
@@ -62,13 +62,13 @@ type GoodItemDTO struct {
 
 func (h *OrdersHandler) CreateOrder(w http.ResponseWriter, r *http.Request) {
 	var req CreateOrderRequest
-	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
+	if err := httputil.ParseJSON(r, &req); err != nil {
 		response.Error(w, http.StatusBadRequest, "invalid json")
 		return
 	}
 
 	if !luhn.IsValidLuhn(req.Order) {
-		response.Error(w, http.StatusUnprocessableEntity, "invalid order number")
+		response.Error(w, http.StatusBadRequest, "invalid order number")
 		return
 	}
 

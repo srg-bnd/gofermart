@@ -1,4 +1,4 @@
-// Dependency Injection Container
+// Package di Dependency Injection Container
 package di
 
 import (

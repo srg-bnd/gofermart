@@ -21,6 +21,7 @@ type Config struct {
 	ShutdownTimeout time.Duration     `env:"SHUTDOWN_TIMEOUT" envDefault:"5s"`
 	JWTSecretKey    string            `env:"JWT_SECRET_KEY"`
 	JWTLifetime     time.Duration     `env:"JWT_LIFETIME" envDefault:"1h"`
+	AccrualAddress  string            `env:"ACCRUAL_SYSTEM_ADDRESS" envDefault:"http://localhost:8081"`
 }
 
 func ParseFlags() Config {
