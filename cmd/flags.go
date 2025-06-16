@@ -2,6 +2,7 @@ package cmd
 
 import (
 	"fmt"
+	"github.com/spf13/pflag"
 	"log"
 	"os"
 	"time"
@@ -9,7 +10,6 @@ import (
 
 	"github.com/caarlos0/env/v11"
 	"github.com/joho/godotenv"
-	"github.com/spf13/pflag"
 )
 
 type Config struct {
