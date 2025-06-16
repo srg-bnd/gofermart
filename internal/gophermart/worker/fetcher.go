@@ -98,12 +98,11 @@ func (f *AccrualFetcher) fetchAccrualResponse(ctx context.Context, number string
 	if err != nil {
 		return nil, fmt.Errorf("http request failed: %w", err)
 	}
-	defer func(Body io.ReadCloser) {
-		err := Body.Close()
-		if err != nil {
+	defer func() {
+		if err := resp.Body.Close(); err != nil {
 			logger.L().Error("failed to close body", zap.Error(err))
 		}
-	}(resp.Body)
+	}()
 
 	if resp.StatusCode == http.StatusTooManyRequests || resp.StatusCode == http.StatusNotFound {
 		return nil, fmt.Errorf("temporary status code: %d", resp.StatusCode)
