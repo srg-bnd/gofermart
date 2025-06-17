@@ -2,7 +2,6 @@ package handlers
 
 import (
 	"errors"
-	"fmt"
 	"gorm.io/gorm"
 	"io"
 	"net/http"
@@ -10,6 +9,7 @@ import (
 	"ya41-56/internal/gophermart/models"
 	"ya41-56/internal/gophermart/worker"
 	"ya41-56/internal/shared/contextutil"
+	"ya41-56/internal/shared/customstrings"
 	"ya41-56/internal/shared/luhn"
 	"ya41-56/internal/shared/repositories"
 	"ya41-56/internal/shared/response"
@@ -52,7 +52,7 @@ func (h *OrdersHandler) Upload(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 	if existed.ID > 0 {
-		if existed.UserID == parseID(userIDStr) {
+		if existed.UserID == customstrings.ParseID(userIDStr) {
 			response.Error(w, http.StatusOK, "order already exists")
 			return
 		}
@@ -61,7 +61,7 @@ func (h *OrdersHandler) Upload(w http.ResponseWriter, r *http.Request) {
 	}
 
 	order := &models.Order{
-		UserID: parseID(userIDStr),
+		UserID: customstrings.ParseID(userIDStr),
 		Number: number,
 		Status: models.OrderStatusNew,
 	}
@@ -83,7 +83,7 @@ func (h *OrdersHandler) List(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	orders, err := h.Orders.FindManyByField(r.Context(), "user_id", parseID(userIDStr))
+	orders, err := h.Orders.FindManyByField(r.Context(), "user_id", customstrings.ParseID(userIDStr))
 	if err != nil {
 		response.Error(w, http.StatusInternalServerError, err.Error())
 		return
@@ -95,13 +95,4 @@ func (h *OrdersHandler) List(w http.ResponseWriter, r *http.Request) {
 	}
 
 	response.JSON(w, http.StatusOK, orders)
-}
-
-func parseID(id string) uint {
-	var uid uint
-	_, err := fmt.Sscanf(id, "%d", &uid)
-	if err != nil {
-		return 0
-	}
-	return uid
 }
