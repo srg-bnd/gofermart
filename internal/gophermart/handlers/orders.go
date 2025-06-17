@@ -99,6 +99,9 @@ func (h *OrdersHandler) List(w http.ResponseWriter, r *http.Request) {
 
 func parseID(id string) uint {
 	var uid uint
-	_, _ = fmt.Sscanf(id, "%d", &uid)
+	_, err := fmt.Sscanf(id, "%d", &uid)
+	if err != nil {
+		return 0
+	}
 	return uid
 }
